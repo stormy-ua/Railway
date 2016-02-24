@@ -34,6 +34,16 @@ namespace proto
 				}
 			};
 		}
+
+		public static Func<Result<T>, Result<T>> TryCatchBind<T>(this Func<T, Result<T>> f)
+		{
+			return f.TryCatch().Bind();
+		}
+
+		public static Func<T, Result<T>> Switch<T>(this Func<T, T> f)
+		{
+			return x => Result.Ok<T> (f(x));
+		}
 	}
 }
 

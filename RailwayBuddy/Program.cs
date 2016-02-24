@@ -35,17 +35,27 @@ namespace proto
 			throw new Exception ("I am failing just for fun");
 		}
 
+		private static Request NameToUpper(Request request){
+			return new Request
+			{ 
+				Name = request.Name.ToUpper(), 
+				Email = request.Email 
+			}; 
+		}
+
 		public static void Main (string[] args)
 		{
 			// define validation functions
-			Func<Request, Result<Request>> validateName = request => ValidateName (request);
-			Func<Request, Result<Request>> validateEmail = request => ValidateEmail (request);
-			Func<Request, Result<Request>> throwException = request => ThrowException (request);
+			Func<Request, Result<Request>> validateName = ValidateName;
+			Func<Request, Result<Request>> validateEmail = ValidateEmail;
+			Func<Request, Result<Request>> throwException = ThrowException;
+			Func<Request, Request> nameToUpper = NameToUpper;
 
 			// combine validation functions
 			var combinedValidation = validateName
 				.Compose(validateEmail.Bind())
-				.Compose(throwException.TryCatch().Bind());
+				//.Compose(throwException.TryCatch().Bind())
+				.Compose(nameToUpper.Switch().Bind());
 
 			// invoke combined function
 			//var result = combinedValidation (new Request { Name = "", Email = "a@b.c" });
