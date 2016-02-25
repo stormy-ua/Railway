@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Railway
+namespace RailwayToolkit
 {
 	/// <summary>
 	/// Group of functions that are designed to work with a type (here represented by railway track), 

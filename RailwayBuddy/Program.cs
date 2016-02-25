@@ -1,5 +1,5 @@
 ﻿using System;
-using Railway;
+using RailwayToolkit;
 
 namespace RailwayBuddy
 {
@@ -66,32 +66,22 @@ namespace RailwayBuddy
 			};
 		}
 
-		private static Exception LogFailure(Exception exc)
+		private static void LogFailure(Exception exc)
 		{
 			Console.WriteLine("Failure: {0} ", exc.Message);
-			return exc;
 		}
 
 		public static void Main (string[] args)
 		{
-			// define validation functions
-			Func<Request, Result<Request>> validateName = ValidateName;
-			Func<Request, Result<Request>> validateEmail = ValidateEmail;
-			Func<Request, Result<Request>> throwException = ThrowException;
-			Func<Request, Request> nameToUpper = NameToUpper;
-			Func<Request, Request> emailToUpper = EmailToUpper;
-			Action<Request> logRequest = LogRequest;
-			Func<Exception, Exception> logFailure = LogFailure;
-			Func<Request, Request> appendDashToName = AppendDashToName;
-
 			// combine validation functions
-			var combinedValidation = validateName
-				.Compose(validateEmail.Bind())
-				.Compose(logRequest.Tee().Switch().Bind())
-				//.Compose(throwException.TryCatch().Bind())
-				.Compose(nameToUpper.Switch().Bind())
-				.Compose(appendDashToName.DoubleMap(logFailure))
-				.Compose(emailToUpper.Map());
+			var combinedValidation = Railway
+                .Apply<Request>(r => ValidateName(r))
+				.OnSuccess(r => ValidateEmail(r))
+				.OnSuccess(r => NameToUpper(r))
+				.OnSuccess(r => AppendDashToName(r))
+				.OnSuccess(r => EmailToUpper(r))
+                .OnSuccess(r => LogRequest(r))
+                .OnFailure(e => LogFailure(e));
 
 			// invoke combined function
 			//var result = combinedValidation (new Request { Name = "", Email = "a@b.c" });

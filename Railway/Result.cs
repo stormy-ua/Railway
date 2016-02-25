@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Railway
+namespace RailwayToolkit
 {
 	public class Result
 	{
