@@ -94,19 +94,19 @@ class MainClass
 	{
 		// combine validation functions
 		var combinedValidation = Railway
-        .Apply<Request>(r => ValidateName(r))
-			.OnSuccess(r => ValidateEmail(r))
-			.OnSuccess(r => NameToUpper(r))
-			.OnSuccess(r => AppendDashToName(r))
-			.OnSuccess(r => EmailToUpper(r))
-        .OnSuccess(r => LogRequest(r))
-        .OnFailure(e => LogFailure(e));
-
+		.Apply<Request>(r => ValidateName(r))
+		.OnSuccess(r => ValidateEmail(r))
+		.OnSuccess(r => NameToUpper(r))
+		.OnSuccess(r => AppendDashToName(r))
+		.OnSuccess(r => EmailToUpper(r))
+		.OnSuccess(r => LogRequest(r)
+		.OnFailure(e => LogFailure(e));
+	
 		// invoke combined function
 		//var result = combinedValidation (new Request { Name = "", Email = "a@b.c" });
 		//var result = combinedValidation (new Request { Name = "Kirill", Email = "" });
 		var result = combinedValidation (new Request { Name = "Kirill", Email = "a@b.c" });
-
+	
 		// process result
 		switch (result.IsSuccess) {
 		case true:
@@ -116,7 +116,7 @@ class MainClass
 			Console.WriteLine ("Failure: {0}", result.Error);
 			break;
 		}
-
+	
 		Console.ReadLine ();
 	}
 }
