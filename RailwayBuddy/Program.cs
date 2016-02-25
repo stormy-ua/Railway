@@ -1,6 +1,7 @@
 ﻿using System;
+using Railway;
 
-namespace proto
+namespace RailwayBuddy
 {
 	public class Request
 	{
@@ -14,20 +15,20 @@ namespace proto
 		{
 			if (string.IsNullOrWhiteSpace (request.Name))
 			{
-				return Result.Fail<Request>("Name must not be blank");
+				return Result.Failure<Request>(new Exception("Name must not be blank"));
 			}
 
-			return Result.Ok<Request> (request);
+			return Result.Success<Request> (request);
 		}
 
 		private static Result<Request> ValidateEmail(Request request)
 		{
 			if (string.IsNullOrWhiteSpace (request.Email))
 			{
-				return Result.Fail<Request>("Email must not be blank");
+				return Result.Failure<Request>(new Exception("Email must not be blank"));
 			}
 
-			return Result.Ok<Request> (request);
+			return Result.Success<Request> (request);
 		}
 
 		private static Result<Request> ThrowException(Request request)
@@ -43,6 +44,34 @@ namespace proto
 			}; 
 		}
 
+		private static Request EmailToUpper(Request request){
+			return new Request
+			{ 
+				Name = request.Name, 
+				Email = request.Email.ToUpper()
+			}; 
+		}
+
+		private static void LogRequest(Request request)
+		{
+			Console.WriteLine("Name: {0}, Email: {1}", request.Name, request.Email);
+		}
+
+		private static Request AppendDashToName(Request request)
+		{
+			return new Request
+			{ 
+				Name = request.Name + "-", 
+				Email = request.Email
+			};
+		}
+
+		private static Exception LogFailure(Exception exc)
+		{
+			Console.WriteLine("Failure: {0} ", exc.Message);
+			return exc;
+		}
+
 		public static void Main (string[] args)
 		{
 			// define validation functions
@@ -50,12 +79,19 @@ namespace proto
 			Func<Request, Result<Request>> validateEmail = ValidateEmail;
 			Func<Request, Result<Request>> throwException = ThrowException;
 			Func<Request, Request> nameToUpper = NameToUpper;
+			Func<Request, Request> emailToUpper = EmailToUpper;
+			Action<Request> logRequest = LogRequest;
+			Func<Exception, Exception> logFailure = LogFailure;
+			Func<Request, Request> appendDashToName = AppendDashToName;
 
 			// combine validation functions
 			var combinedValidation = validateName
 				.Compose(validateEmail.Bind())
+				.Compose(logRequest.Tee().Switch().Bind())
 				//.Compose(throwException.TryCatch().Bind())
-				.Compose(nameToUpper.Switch().Bind());
+				.Compose(nameToUpper.Switch().Bind())
+				.Compose(appendDashToName.DoubleMap(logFailure))
+				.Compose(emailToUpper.Map());
 
 			// invoke combined function
 			//var result = combinedValidation (new Request { Name = "", Email = "a@b.c" });

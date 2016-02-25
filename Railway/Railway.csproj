@@ -2,13 +2,13 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{CA4A1F6C-7F93-4A0D-8511-282973DDA063}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>proto</RootNamespace>
-    <AssemblyName>proto</AssemblyName>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FB113E7A-EBA1-4059-8659-137E40610983}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Railway</RootNamespace>
+    <AssemblyName>Railway</AssemblyName>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -16,30 +16,23 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RailwayExtensions.cs" />
+    <Compile Include="Result.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\Railway\Railway.csproj">
-      <Project>{FB113E7A-EBA1-4059-8659-137E40610983}</Project>
-      <Name>Railway</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace proto
+namespace Railway
 {
 	public class Result
 	{
-		public static Result<T> Ok<T>(T value)
+		public static Result<T> Success<T>(T value)
 		{
 			return new Result<T>(value, true, null);
 		}
 
-		public static Result<T> Fail<T>(string error)
+		public static Result<T> Failure<T>(Exception error)
 		{
 			return new Result<T>(default(T), false, error);
 		}
@@ -19,9 +19,9 @@ namespace proto
 	{
 		readonly T _value;
 		readonly bool _isSuccess;
-		readonly string _error;
+		readonly Exception _error;
 
-		internal Result(T value, bool isSuccess, string error)
+		internal Result(T value, bool isSuccess, Exception error)
 		{
 			_value = value;
 			_isSuccess = isSuccess;
@@ -30,7 +30,7 @@ namespace proto
 
 		public bool IsSuccess { get { return _isSuccess; } }
 
-		public string Error { get { return _error; } }
+		public Exception Error { get { return _error; } }
 
 		public T Value { get { return _value; } }
 

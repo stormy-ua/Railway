@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RailwayBuddy", "RailwayBuddy\RailwayBuddy.csproj", "{CA4A1F6C-7F93-4A0D-8511-282973DDA063}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Railway", "Railway\Railway.csproj", "{FB113E7A-EBA1-4059-8659-137E40610983}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,10 @@ Global
 		{CA4A1F6C-7F93-4A0D-8511-282973DDA063}.Debug|x86.Build.0 = Debug|x86
 		{CA4A1F6C-7F93-4A0D-8511-282973DDA063}.Release|x86.ActiveCfg = Release|x86
 		{CA4A1F6C-7F93-4A0D-8511-282973DDA063}.Release|x86.Build.0 = Release|x86
+		{FB113E7A-EBA1-4059-8659-137E40610983}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FB113E7A-EBA1-4059-8659-137E40610983}.Debug|x86.Build.0 = Debug|Any CPU
+		{FB113E7A-EBA1-4059-8659-137E40610983}.Release|x86.ActiveCfg = Release|Any CPU
+		{FB113E7A-EBA1-4059-8659-137E40610983}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = proto\proto.csproj
