@@ -2,6 +2,11 @@ Set of railway-oriented C# extension methods which could be used as building blo
 
 Inspired by [Railway oriented programming](http://fsharpforfunandprofit.com/posts/recipe-part2/)
 
+# Nuget
+
+[![Nuget](https://img.shields.io/nuget/v/CSharpRailway.svg)](https://www.nuget.org/packages/CSharpRailway/) 
+[![Nuget](https://img.shields.io/nuget/dt/CSharpRailway.svg)](https://www.nuget.org/packages/CSharpRailway/)
+
 # Supported railway-oriented functions
 
 **Function** | **Description**
