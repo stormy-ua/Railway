@@ -10,12 +10,22 @@ namespace RailwayToolkit
             return f.TryCatch();
         }
 
+        public static Func<T, Result<T>> Apply<T>(Func<T, Result<T>> f)
+        {
+            return f.TryCatch();
+        }
+
         public static Func<T, Result<T>> Apply<T>(Action<T> f)
         {
             return f.Tee().Switch().TryCatch();
         }
 
         public static Func<T, Result<V>> Apply<T, V>(Func<T, V> f)
+        {
+            return f.Switch().TryCatch();
+        }
+
+        public static Func<T, Result<T>> Apply<T>(Func<T, T> f)
         {
             return f.Switch().TryCatch();
         }
