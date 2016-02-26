@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace RailwayToolkit
 {
@@ -21,12 +22,12 @@ namespace RailwayToolkit
 		/// An adapter that takes a switch function and creates a new function that accepts 
 		/// two-track values as input.
 		/// </summary>
-		public static Func<Result<T>, Result<T>> Bind<T>(this Func<T, Result<T>> f)
+		public static Func<Result<T>, Result<V>> Bind<T, V>(this Func<T, Result<V>> f)
 		{
 			return x => 
 			{
 				if (x.IsFailure) {
-					return x;
+					return Result.Failure<V>(x.Error);
 				}
 
 				return f (x.Value);
@@ -37,7 +38,7 @@ namespace RailwayToolkit
 		/// An adapter that takes a normal one-track function and turns it into a switch function, 
 		/// but also catches exceptions.
 		/// </summary>
-		public static Func<T, Result<T>> TryCatch<T>(this Func<T, Result<T>> f)
+		public static Func<T, Result<V>> TryCatch<T, V>(this Func<T, Result<V>> f)
 		{
 			return x => 
 			{
@@ -46,7 +47,7 @@ namespace RailwayToolkit
 					return f (x);
 				}
 				catch(Exception exc){
-					return Result.Failure<T>(exc);
+					return Result.Failure<V>(exc);
 				}
 			};
 		}
@@ -55,7 +56,7 @@ namespace RailwayToolkit
 		/// An adapter that takes a normal one-track function and turns it into a switch function. 
 		/// (Also known as a "lift" in some contexts.)
 		/// </summary>
-		public static Func<T, Result<T>> Switch<T>(this Func<T, T> f)
+		public static Func<T, Result<V>> Switch<T, V>(this Func<T, V> f)
 		{
 			return x => Result.Success(f(x));
 		}
@@ -77,12 +78,11 @@ namespace RailwayToolkit
 		/// An adapter that takes two one-track functions and turns them into a single two-track function.
 		///  (Also known as bimap.)
 		/// </summary>
-		public static Func<Result<T>, Result<T>> DoubleMap<T>(this Func<T, T> success, Func<Exception, Exception> failure)
+		public static Func<Result<T>, Result<V>> DoubleMap<T, V>(this Func<T, V> success, Func<Exception, Exception> failure)
 		{
 			return x => {
 				if (x.IsFailure) {
-					Result.Failure<T>(failure(x.Error));
-					return x;
+					return Result.Failure<V>(failure(x.Error));
 				}
 					
 				return Result.Success(success(x.Value));
@@ -93,14 +93,45 @@ namespace RailwayToolkit
 		/// An adapter that takes a normal one-track function and turns it into a two-track function. 
 		/// (Also known as a "lift" in some contexts.)
 		/// </summary>
-		public static Func<Result<T>, Result<T>> Map<T>(this Func<T, T> f)
+		public static Func<Result<T>, Result<V>> Map<T, V>(this Func<T, V> f)
 		{
 			return x => {
 				if (x.IsFailure) {
-					return x;
+					return Result.Failure<V>(x.Error);
 				}
 
 				return Result.Success(f(x.Value));
+			};
+		}
+
+		/// <summary>
+		/// A combiner that takes two switch functions and creates a new switch function 
+		/// by joining them in "parallel" and "adding" the results. 
+		/// (Also known as ++ and <+> in other contexts.)
+		/// </summary>
+		public static Func<U, Result<V>> Plus<U, V>(
+			this Func<U, Result<V>> switch1,
+			Func<V, V, V> aggregateSuccess, Func<Exception, Exception, Exception> aggregateFailure,
+			params Func<U, Result<V>>[] switches)
+
+		{
+			return x => {
+				var result1 = switch1(x);
+				var results = switches.Select(s => s(x));
+
+				if(result1.IsSuccess && results.All(r => r.IsSuccess)) {
+					return Result.Success(results.Select(r => r.Value).Aggregate(result1.Value, aggregateSuccess));
+				}
+				
+				if(result1.IsSuccess && results.Any(r => r.IsFailure)){
+					return Result.Failure<V>(results.Where(r => r.IsFailure).Select(r => r.Error).Aggregate(aggregateFailure));
+				}
+
+				if(result1.IsFailure && results.All(r => r.IsSuccess)) {
+					return Result.Failure<V>(result1.Error);
+				}
+
+				return Result.Failure<V>(results.Select(r => r.Error).Aggregate(result1.Error, aggregateFailure));
 			};
 		}
 	}
