@@ -111,27 +111,27 @@ namespace RailwayToolkit
 		/// </summary>
 		public static Func<U, Result<V>> Plus<U, V>(
 			this Func<U, Result<V>> switch1,
-			Func<V, V, V> aggregateSuccess, Func<Exception, Exception, Exception> aggregateFailure,
-			params Func<U, Result<V>>[] switches)
+			Func<U, Result<V>> switch2, 
+			Func<V, V, V> aggregateSuccess, Func<Exception, Exception, Exception> aggregateFailure)
 
 		{
 			return x => {
 				var result1 = switch1(x);
-				var results = switches.Select(s => s(x));
+				var result2 = switch2(x);
 
-				if(result1.IsSuccess && results.All(r => r.IsSuccess)) {
-					return Result.Success(results.Select(r => r.Value).Aggregate(result1.Value, aggregateSuccess));
+				if(result1.IsSuccess && result2.IsSuccess) {
+					return Result.Success(aggregateSuccess(result1.Value, result2.Value));
 				}
 				
-				if(result1.IsSuccess && results.Any(r => r.IsFailure)){
-					return Result.Failure<V>(results.Where(r => r.IsFailure).Select(r => r.Error).Aggregate(aggregateFailure));
+				if(result1.IsSuccess && result2.IsFailure){
+					return Result.Failure<V>(result2.Error);
 				}
 
-				if(result1.IsFailure && results.All(r => r.IsSuccess)) {
+				if(result1.IsFailure && result2.IsSuccess) {
 					return Result.Failure<V>(result1.Error);
 				}
 
-				return Result.Failure<V>(results.Select(r => r.Error).Aggregate(result1.Error, aggregateFailure));
+				return Result.Failure<V>(aggregateFailure(result1.Error, result2.Error));
 			};
 		}
 	}

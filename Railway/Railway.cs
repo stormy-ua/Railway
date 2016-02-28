@@ -47,10 +47,9 @@ namespace RailwayToolkit
 
 		public static Func<T, Result<V>> OnSuccess<T, U, V>(this Func<T, Result<U>> f, 
 			Func<V, V, V> aggregateSuccess, Func<Exception, Exception, Exception> aggregateFailure,
-			Func<U, Result<V>> onSuccess,
 			params Func<U, Result<V>>[] onSuccesses)
 		{
-			return f.Compose(onSuccess.Plus(aggregateSuccess, aggregateFailure, onSuccesses).Bind());
+			return f.Compose(onSuccesses.Aggregate((f1, f2) => f1.Plus(f2, aggregateSuccess, aggregateFailure)).Bind());
 		}
 
         public static Func<T, Result<V>> OnFailure<T, V>(this Func<T, Result<V>> f, Func<Exception, Exception> onFailure)
