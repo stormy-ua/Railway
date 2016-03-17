@@ -111,3 +111,8 @@ class MainClass
 ```
 
 [Full example source code](https://github.com/stormy-ua/Functional/blob/master/RailwayBuddy/Program.cs)
+
+
+## License
+
+Licensed under the [MIT License](https://github.com/stormy-ua/Railway/blob/master/License.txt).
